@@ -1,0 +1,75 @@
+---
+# Source: rancher/templates/deployment.yaml
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: release-name-rancher
+  labels:
+    app: release-name-rancher
+    chart: rancher-2019.1.1
+    heritage: Tiller
+    release: release-name
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: release-name-rancher
+  template:
+    metadata:
+      labels:
+        app: release-name-rancher
+        release: release-name
+    spec:
+      serviceAccountName: release-name-rancher
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - release-name-rancher
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - image: rancher/rancher:v2.1.5
+        name: rancher
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        args:
+        # Private CA - don't clear ca certs
+        - "--http-listen-port=80"
+        - "--https-listen-port=443"
+        - "--add-local=auto"
+        env:
+        - name: CATTLE_NAMESPACE
+          value: default
+        - name: CATTLE_PEER_SERVICE
+          value: release-name-rancher
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 30
+        resources:
+          {}
+          
+        volumeMounts:
+        # Pass CA cert into rancher for private CA
+        - mountPath: /etc/rancher/ssl
+          name: tls-ca-volume
+          readOnly: true
+      volumes:
+      - name: tls-ca-volume
+        secret:
+          defaultMode: 0400
+          secretName: tls-ca
+

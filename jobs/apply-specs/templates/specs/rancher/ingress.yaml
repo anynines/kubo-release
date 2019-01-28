@@ -1,0 +1,27 @@
+---
+# Source: rancher/templates/ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: release-name-rancher
+  labels:
+    app: release-name-rancher
+    chart: rancher-2019.1.1
+    heritage: Tiller
+    release: release-name
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+spec:
+  rules:
+  - host: rancher.my.org  # hostname to access rancher server
+    http:
+      paths:
+      - backend:
+          serviceName: release-name-rancher
+          servicePort: 80
+  tls:
+  - hosts:
+    - rancher.my.org
+    secretName: tls-rancher-ingress

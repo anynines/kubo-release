@@ -1,0 +1,19 @@
+---
+# Source: rancher/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-rancher
+  labels:
+    app: release-name-rancher
+    chart: rancher-2019.1.1
+    heritage: Tiller
+    release: release-name
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: release-name-rancher

@@ -1,0 +1,19 @@
+---
+# Source: rancher/templates/clusterRoleBinding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: release-name-rancher
+  labels:
+    app: release-name-rancher
+    chart: rancher-2019.1.1
+    heritage: Tiller
+    release: release-name
+subjects:
+- kind: ServiceAccount
+  name: release-name-rancher
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
