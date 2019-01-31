@@ -2,6 +2,7 @@ name: kube-apiserver
 templates:
   bin/ensure_apiserver_healthy.erb: bin/ensure_apiserver_healthy
   bin/post-start.erb: bin/post-start
+  bin/post-deploy.sh: bin/post-deploy
   config/audit_policy.yml.erb: config/audit_policy.yml
   config/bpm.yml.erb: config/bpm.yml
   config/cloud-provider.ini.erb: config/cloud-provider.ini
